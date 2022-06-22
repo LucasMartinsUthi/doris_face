@@ -1,24 +1,41 @@
 #!/usr/bin/env python
 # license removed for brevity
 import rospy
-from std_msgs.msg import String
+from std_msgs.msg import Int16
 
-def talker():
-    rospy.init_node('talker', anonymous=True)
+EMOTIONS = {
+    "Normal": 0,
+    "Happy": 1,
+    "Sad": 2,
+    "Rage": 3,
+    "Scared": 4,
+}
+class emotionController():
 
-    pub = rospy.Publisher('chatter', String, queue_size=10)
-    rate = rospy.Rate(10)
+    def __init__(self):
+        self.emotion = EMOTIONS["Normal"]
+        self.emotion_pub()
 
-    while not rospy.is_shutdown():
-        hello_str = "hello world %s" % rospy.get_time()
+    def emotion_pub(self):
+        rospy.init_node('emotion_talker', anonymous=True)
 
-        rospy.loginfo(hello_str)
-        pub.publish(hello_str)
-        
-        rate.sleep()
+        pub = rospy.Publisher('emotion', Int16, queue_size=10)
+        rate = rospy.Rate(10)
+
+        while not rospy.is_shutdown():
+            rospy.loginfo(self.emotion)
+            pub.publish(self.emotion)
+            
+            rate.sleep()
+
+    def getEmotion(self):
+        return self.emotion
+
+    def setEmotion(self, emotion):
+        self.emotion = emotion
 
 if __name__ == '__main__':
     try:
-        talker()
+        emotionController()
     except rospy.ROSInterruptException:
         pass
