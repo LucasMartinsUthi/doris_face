@@ -30,16 +30,37 @@
   // Subscribing to a Topic
   // ----------------------
 
-  var listener = new ROSLIB.Topic({
+  let listener = new ROSLIB.Topic({
     ros : ros,
-    name : '/chatter',
-    messageType : 'std_msgs/String'
+    name : '/emotion',
+    messageType : 'std_msgs/Int16'
   });
 
   listener.subscribe(function(message) {
     console.log('Received message on ' + listener.name + ': ' + message.data);
-    listener.unsubscribe();
   });
+
+  let call_service = (emotion) => {
+    console.log("call service")
+
+    let set_emotion_service = new ROSLIB.Service({
+      ros : ros,
+      name : '/set_emotion',
+      serviceType : 'doris_face/SetEmotion'
+    });
+
+    let request = new ROSLIB.ServiceRequest({ emotion });
+
+    set_emotion_service.callService(request, function(result) {
+      console.log('Result for service call on '
+        + set_emotion_service.name
+        + ': '
+        + result.resp);
+    }, function(error){
+        console.log({error})
+        console.error("Got an error while trying to call power state service");
+    });
+  }
 
 </script>
 </head>
@@ -47,5 +68,9 @@
 <body>
   <h1>Simple roslib Example</h1>
   <p>Check your Web Console for output.</p>
+
+  <button onclick="call_service(0)">Emotion 0</button>
+  <button onclick="call_service(1)">Emotion 1</button>
+  <button onclick="call_service(2)">Emotion 2</button>
 </body>
 </html>

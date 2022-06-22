@@ -1,4 +1,0 @@
-<launch>
-    <node pkg="doris_face" type="talker.py" name="talker" output="screen" />
-    <node pkg="doris_face" type="listener.py" name="listener" output="screen" />
-</launch>
